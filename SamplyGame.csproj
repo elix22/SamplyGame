@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup>          
+    <TieredCompilation>false</TieredCompilation>          
+    <AssemblyName>Game</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows> 
+    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX> 
+    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssetsSourceFiles Include="Assets/**/*.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UrhoDotNet">
+      <HintPath>libs\dotnet\urho\desktop\UrhoDotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  
+
+
+
+
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="'$(IsWindows)'=='true'">
+    <Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\%(RecursiveDir)" SkipUnchangedFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+    <Copy SourceFiles="libs/Windows/Urho3D.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+
+</Project>
