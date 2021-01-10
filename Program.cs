@@ -1,7 +1,8 @@
 ﻿using Urho;
 
 //dotnet publish -r win-x64 -c release /p:PublishSingleFile=true /p:PublishTrimmed=true -p:PublishReadyToRun=true
-//osx-x64 , 
+//dotnet publish -r osx-x64 -c release /p:PublishSingleFile=true /p:PublishTrimmed=true -p:PublishReadyToRun=true
+
 namespace SamplyGame
 {
     class Program

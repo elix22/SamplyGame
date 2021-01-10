@@ -44,8 +44,15 @@
 
   <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="'$(IsWindows)'=='true'">
     <Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\%(RecursiveDir)" SkipUnchangedFiles="true" Retries="3" RetryDelayMilliseconds="300" />
-    <Copy SourceFiles="libs/Windows/Urho3D.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="libs/windows/Urho3D.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
+
+
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="'$(IsOSX)'=='true'">
+    <Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\%(RecursiveDir)" SkipUnchangedFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+    <Copy SourceFiles="libs/macos/libUrho3D.dylib" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+
 
 
 </Project>
