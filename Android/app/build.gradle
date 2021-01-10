@@ -38,3 +38,46 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation project(path: ':classes')
 }
+
+task copyAssets(type: Copy) {
+    println "I'm copyAssets task!"
+    from "../../Assets"
+    into "src/main/assets"
+}
+
+task copyDotNetAssets(type: Copy) {
+    println "I'm copyDotNetAssets task!"
+    dependsOn('copyAssets')
+    from("../../libs/dotnet/bcl") {
+        include "android/**"
+    }
+    into "src/main/assets/Data/DotNet"
+}
+
+task dotnetBuildRelease {
+    dependsOn('copyDotNetAssets')
+    doLast {
+        exec {
+            workingDir '../../'
+            commandLine 'dotnet','build','--configuration','Release'
+        }
+    }
+}
+
+task dotnetBuildDebug {
+    dependsOn('copyDotNetAssets')
+    doLast {
+        exec {
+            workingDir '../../'
+            commandLine 'dotnet','build','--configuration','Debug'
+        }
+    }
+}
+
+task dotnetRelease {
+    dependsOn('dotnetBuildRelease','assembleRelease')
+}
+
+task dotnetDebug {
+    dependsOn('dotnetBuildDebug','assembleDebug')
+}
