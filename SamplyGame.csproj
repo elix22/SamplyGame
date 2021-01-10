@@ -25,9 +25,11 @@
     <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
   </PropertyGroup>
 
-  <ItemGroup>
-    <AssetsSourceFiles Include="Assets/**/*.*" />
+
+  <ItemGroup Condition="'$(IsWindows)'=='true' Or '$(IsOSX)'=='true' Or '$(IsLinux)'=='true'">
+    <None Remove="Android\**" />
   </ItemGroup>
+
 
   <ItemGroup>
     <Reference Include="UrhoDotNet">
@@ -35,10 +37,10 @@
     </Reference>
   </ItemGroup>
 
-  
 
-
-
+  <ItemGroup>
+    <AssetsSourceFiles Include="Assets/**/*.*" />
+  </ItemGroup>
 
   <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="'$(IsWindows)'=='true'">
     <Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\%(RecursiveDir)" SkipUnchangedFiles="true" Retries="3" RetryDelayMilliseconds="300" />
