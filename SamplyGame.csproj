@@ -54,5 +54,9 @@
   </Target>
 
 
+ <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="'$(IsLinux)'=='true'">
+    <Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\%(RecursiveDir)" SkipUnchangedFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+    <Copy SourceFiles="libs/linux/libUrho3D.so" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>
