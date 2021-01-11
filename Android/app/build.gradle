@@ -47,37 +47,40 @@ task copyAssets(type: Copy) {
 
 task copyDotNetAssets(type: Copy) {
     println "I'm copyDotNetAssets task!"
-    dependsOn('copyAssets')
     from("../../libs/dotnet/bcl") {
         include "android/**"
+    }
+    from("../../libs/dotnet/urho/mobile") {
+        include "android/UrhoDotNet.dll"
     }
     into "src/main/assets/Data/DotNet"
 }
 
 task dotnetBuildRelease {
-    dependsOn('copyDotNetAssets')
-    doLast {
-        exec {
-            workingDir '../../'
-            commandLine 'dotnet','build','--configuration','Release'
-        }
+    exec {
+        println "I'm dotnetBuildRelease task!"
+        workingDir '../../'
+        commandLine 'dotnet','build','--configuration','Release'
     }
+    
 }
 
 task dotnetBuildDebug {
-    dependsOn('copyDotNetAssets')
-    doLast {
-        exec {
-            workingDir '../../'
-            commandLine 'dotnet','build','--configuration','Debug'
-        }
+    exec {
+        println "I'm dotnetBuildDebug task!"
+        workingDir '../../'
+        commandLine 'dotnet','build','--configuration','Debug'
     }
 }
 
 task dotnetRelease {
-    dependsOn('dotnetBuildRelease','assembleRelease')
+    println "I'm dotnetRelease task!"
+    mustRunAfter("copyAssets",'copyDotNetAssets','dotnetBuildRelease')
+    dependsOn('copyAssets','copyDotNetAssets','dotnetBuildRelease','assembleRelease')
 }
 
 task dotnetDebug {
-    dependsOn('dotnetBuildDebug','assembleDebug')
+    println "I'm dotnetDebug task!"
+    mustRunAfter("copyAssets",'copyDotNetAssets','dotnetBuildDebug')
+    dependsOn('copyAssets','copyDotNetAssets','dotnetBuildDebug','assembleDebug')
 }
