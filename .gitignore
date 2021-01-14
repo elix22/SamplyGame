@@ -9,3 +9,4 @@ bin
 libs/ios/.DS_Store
 .DS_Store
 Android/app/src/main/assets
+Android/classes/build/
