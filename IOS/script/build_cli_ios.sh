@@ -97,10 +97,10 @@ copy_file()
 
 check_ios_env_vars()
 {
-    if [ -f ios_env_vars.sh ]; then
+    if [ -f build_ios_cli/ios_env_vars.sh ]; then
         echo "ios_env_vars.sh exist"
          # setup the variables
-        . ./ios_env_vars.sh
+        . build_ios_cli/ios_env_vars.sh
     else
         echo "Enter your development team."
         read -p "development team: " development_team
@@ -111,31 +111,33 @@ check_ios_env_vars()
             exit -1;
         fi
 
-        echo "Enter your code sign identity."
+        security find-identity -v -p codesigning
+
+        echo "Enter your code sign identity. (press enter for default)"
         read -p "code sign identity: " code_sign_identity
         if [[ "$code_sign_identity" == "" ]]; then
             echo
-            echo "ERROR: No code sign identity specified."
+            echo "No code sign identity specified , will choose default ."
             echo
-            exit -1;
         fi
 
-        echo "Enter your provisioning profile."
+        echo "Enter your provisioning profile. (press enter for default)"
         read -p "provisioning profile: " provisioning_profile
         if [[ "$provisioning_profile" == "" ]]; then
             echo
-            echo "ERROR: No provisioning profile specified."
+            echo "No provisioning profile specified , will choose default."
             echo
-            exit -1;
         fi
 
-        cp ./script/ios_env_vars.sh .
-        aliassedinplace "s*T_DEVELOPMENT_TEAM*$development_team*g" "ios_env_vars.sh"
-        aliassedinplace "s*T_CODE_SIGN_IDENTITY*$code_sign_identity*g" "ios_env_vars.sh"
-        aliassedinplace "s*T_PROVISIONING_PROFILE_SPECIFIER*$provisioning_profile*g" "ios_env_vars.sh"
+        mkdir -p build_ios_cli
+
+        cp ./script/ios_env_vars.sh build_ios_cli
+        aliassedinplace "s*T_DEVELOPMENT_TEAM*$development_team*g" "build_ios_cli/ios_env_vars.sh"
+        aliassedinplace "s*T_CODE_SIGN_IDENTITY*$code_sign_identity*g" "build_ios_cli/ios_env_vars.sh"
+        aliassedinplace "s*T_PROVISIONING_PROFILE_SPECIFIER*$provisioning_profile*g" "build_ios_cli/ios_env_vars.sh"
 
         # setup the variables
-        . ./ios_env_vars.sh
+        . build_ios_cli/ios_env_vars.sh
 
     fi
 }
@@ -149,7 +151,6 @@ check_ios_env_vars
 
 # first run camke
 ./script/cmake_ios_dotnet.sh build -DDEVELOPMENT_TEAM=${DEVELOPMENT_TEAM} -DCODE_SIGN_IDENTITY=${CODE_SIGN_IDENTITY} -DPROVISIONING_PROFILE_SPECIFIER=${PROVISIONING_PROFILE_SPECIFIER}
-
 
 
 mkdir -p build_ios_cli
