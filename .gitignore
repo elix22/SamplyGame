@@ -2,3 +2,10 @@ IOS/build
 IOS/build_ios_cli
 obj
 libs/ios/lib-urho3d-mono-aot.a
+.vscode
+.vs
+Urho3D.log
+bin
+libs/ios/.DS_Store
+.DS_Store
+Android/app/src/main/assets
