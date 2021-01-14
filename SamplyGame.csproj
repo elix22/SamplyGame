@@ -13,10 +13,13 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>false</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType></DebugType>
     <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -25,12 +28,60 @@
     <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
   </PropertyGroup>
 
+  <ItemGroup>
+    <AssetsSourceFiles Include="Assets/**/*.*" />
+  </ItemGroup>
+  
 
   <ItemGroup Condition="'$(IsWindows)'=='true' Or '$(IsOSX)'=='true' Or '$(IsLinux)'=='true'">
     <None Remove="Android\**" />
+    <None Remove="IOS\**" />
+    <None Remove="libs\dotnet\bcl\ios\**" />
+    <None Remove="libs\dotnet\bcl\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="libs\dotnet\bcl\ios\Consts.cs" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="libs\dotnet\urho\mobile\.DS_Store" />
+    <None Remove="libs\dotnet\urho\mobile\ios\UrhoDotNet.dll" />
+    <None Remove="libs\dotnet\urho\mobile\android\UrhoDotNet.dll" />
+    <None Remove="libs\ios\lib-urho3d-mono-aot.a" />
+    <None Remove="libs\ios\libmono-native.iphone.fat.a" />
+    <None Remove="libs\ios\libmonosgen-2.0.iphone.fat.a" />
+    <None Remove="libs\ios\libmono-ee-interp.iphone.fat.a" />
+    <None Remove="libs\ios\libmono-icall-table.iphone.fat.a" />
+    <None Remove="libs\ios\libmono-ilgen.iphone.fat.a" />
+    <None Remove="libs\ios\libmono-profiler-log.iphone.fat.a" />
+    <None Remove="Assets\Data\DotNet\.DS_Store" />
+    <None Remove="Assets\Data\DotNet\Game.dll" />
+    <None Remove="Assets\Data\DotNet\ios\UrhoDotNet.dll" />
+    <None Remove="Assets\Data\DotNet\ios\mscorlib.dll" />
+    <None Remove="Assets\Data\DotNet\ios\System.Threading.Tasks.dll" />
+    <None Remove="Assets\Data\DotNet\ios\Mono.Security.dll" />
+    <None Remove="Assets\Data\DotNet\ios\System.Runtime.dll" />
+    <None Remove="Assets\Data\DotNet\ios\System.dll" />
+    <None Remove="Assets\Data\DotNet\ios\System.Numerics.dll" />
+    <None Remove="Assets\Data\DotNet\ios\System.Xml.dll" />
+    <None Remove="Assets\Data\DotNet\ios\System.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\.DS_Store" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\Game.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\UrhoDotNet.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\mscorlib.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\System.Threading.Tasks.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\Mono.Security.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\System.Runtime.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\System.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\System.Numerics.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\System.Xml.dll" />
+    <AssetsSourceFiles Remove="Assets\Data\DotNet\ios\System.Core.dll" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Reference Include="UrhoDotNet">
       <HintPath>libs\dotnet\urho\desktop\UrhoDotNet.dll</HintPath>
@@ -38,13 +89,15 @@
   </ItemGroup>
 
 
-  <ItemGroup>
-    <AssetsSourceFiles Include="Assets/**/*.*" />
-  </ItemGroup>
+
+
+  
 
   <ItemGroup>
     <AndroidAssetsDestinationDir Include="Android/app/src/main/assets/Data/DotNet" />
   </ItemGroup>
+
+
 
   <Target Name="CopyCustomContentWindows" AfterTargets="AfterBuild" Condition="'$(IsWindows)'=='true'">
     <Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\%(RecursiveDir)" SkipUnchangedFiles="true" Retries="3" RetryDelayMilliseconds="300" />
