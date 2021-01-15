@@ -39,6 +39,8 @@ export ASSETS_FOLDER_DOTNET_PATH=../../Assets/Data/DotNet
 export C_SHARP_SOURCE_CODE='../../Program.cs  -recurse:'../../Source/*.cs''
 export INTERMEDIATE_FOLDER=intermediate
 
+export BUILD_DIR=build
+
 export UUID='com.github.urho3d'
 export APP_NAME='SamplyGame' 
 export LOWER_APP_NAME=$(echo ${APP_NAME} |  tr 'A-Z' 'a-z')
@@ -97,10 +99,10 @@ copy_file()
 
 check_ios_env_vars()
 {
-    if [ -f build_ios_cli/ios_env_vars.sh ]; then
+    if [ -f ${BUILD_DIR}/ios_env_vars.sh ]; then
         echo "ios_env_vars.sh exist"
          # setup the variables
-        . build_ios_cli/ios_env_vars.sh
+        . ${BUILD_DIR}/ios_env_vars.sh
     else
         echo "Enter your development team."
         read -p "development team: " development_team
@@ -129,15 +131,15 @@ check_ios_env_vars()
             echo
         fi
 
-        mkdir -p build_ios_cli
+        mkdir -p ${BUILD_DIR}
 
-        cp ./script/ios_env_vars.sh build_ios_cli
-        aliassedinplace "s*T_DEVELOPMENT_TEAM*$development_team*g" "build_ios_cli/ios_env_vars.sh"
-        aliassedinplace "s*T_CODE_SIGN_IDENTITY*$code_sign_identity*g" "build_ios_cli/ios_env_vars.sh"
-        aliassedinplace "s*T_PROVISIONING_PROFILE_SPECIFIER*$provisioning_profile*g" "build_ios_cli/ios_env_vars.sh"
+        cp ./script/ios_env_vars.sh ${BUILD_DIR}
+        aliassedinplace "s*T_DEVELOPMENT_TEAM*$development_team*g" "${BUILD_DIR}/ios_env_vars.sh"
+        aliassedinplace "s*T_CODE_SIGN_IDENTITY*$code_sign_identity*g" "${BUILD_DIR}/ios_env_vars.sh"
+        aliassedinplace "s*T_PROVISIONING_PROFILE_SPECIFIER*$provisioning_profile*g" "${BUILD_DIR}/ios_env_vars.sh"
 
         # setup the variables
-        . build_ios_cli/ios_env_vars.sh
+        . ${BUILD_DIR}/ios_env_vars.sh
 
     fi
 }
@@ -150,11 +152,11 @@ checkdeps brew cmake xcodebuild ios-deploy codesign mcs
 check_ios_env_vars
 
 # first run camke
-./script/cmake_ios_dotnet.sh build -DDEVELOPMENT_TEAM=${DEVELOPMENT_TEAM} -DCODE_SIGN_IDENTITY=${CODE_SIGN_IDENTITY} -DPROVISIONING_PROFILE_SPECIFIER=${PROVISIONING_PROFILE_SPECIFIER}
+./script/cmake_ios_dotnet.sh ${BUILD_DIR} -DDEVELOPMENT_TEAM=${DEVELOPMENT_TEAM} -DCODE_SIGN_IDENTITY=${CODE_SIGN_IDENTITY} -DPROVISIONING_PROFILE_SPECIFIER=${PROVISIONING_PROFILE_SPECIFIER}
 
 
-mkdir -p build_ios_cli
-cd build_ios_cli
+mkdir -p ${BUILD_DIR}
+cd ${BUILD_DIR}
 mkdir ${INTERMEDIATE_FOLDER}
 
 
@@ -190,6 +192,6 @@ ${AR} cr lib-urho3d-mono-aot.a  ${INTERMEDIATE_FOLDER}/*.o
 mv lib-urho3d-mono-aot.a ../../libs/ios
 
 
-xcodebuild -project ../build/${APP_NAME}.xcodeproj
+xcodebuild -project ../${BUILD_DIR}/${APP_NAME}.xcodeproj
 
-ios-deploy --justlaunch --bundle ../build/bin/${APP_NAME}.app
+ios-deploy --justlaunch --bundle ../${BUILD_DIR}/bin/${APP_NAME}.app
