@@ -301,15 +301,25 @@ extern void *mono_aot_module_System_Xml_info;
 extern void *mono_aot_module_Mono_Security_info;
 extern void *mono_aot_module_System_Numerics_info;
 
+//extern void *mono_aot_module_Xamarin_iOS_info;
+//
+/*
+extern void *mono_aot_module_netstandard_info;
 
-extern void *mono_aot_module_System_Runtime_info;
-extern void *mono_aot_module_System_Threading_Tasks_info;
 
-extern void *mono_aot_module_System_Linq_info;
 
+
+extern void *mono_aot_module_System_Data_info;
+extern void *mono_aot_module_System_Transactions_info;
+extern void *mono_aot_module_System_Data_DataSetExtensions_info;
+extern void *mono_aot_module_System_Drawing_Common_info;
+extern void *mono_aot_module_System_IO_Compression_info;
+extern void *mono_aot_module_System_IO_Compression_FileSystem_info;
+extern void *mono_aot_module_System_ComponentModel_Composition_info;
+ */
+//extern void *mono_aot_module_Xamarin_iOS_info;
 
 } // extern "C"
-
 
 void urho_mono_setup_aot() {
     mono_aot_register_module((void **)mono_aot_module_Game_info);
@@ -322,11 +332,18 @@ void urho_mono_setup_aot() {
     
     mono_aot_register_module((void **)mono_aot_module_Mono_Security_info);
     mono_aot_register_module((void **)mono_aot_module_System_Numerics_info);
-    
-    mono_aot_register_module((void **)mono_aot_module_System_Runtime_info);
-    mono_aot_register_module((void **)mono_aot_module_System_Threading_Tasks_info);
-    mono_aot_register_module((void **)mono_aot_module_System_Linq_info);
-   
+    /*
+    mono_aot_register_module((void **)mono_aot_module_netstandard_info);
+  
+    mono_aot_register_module((void **)mono_aot_module_System_Data_info);
+    mono_aot_register_module((void **)mono_aot_module_System_Transactions_info);
+    mono_aot_register_module((void **)mono_aot_module_System_Data_DataSetExtensions_info);
+    mono_aot_register_module((void **)mono_aot_module_System_Drawing_Common_info);
+    mono_aot_register_module((void **)mono_aot_module_System_IO_Compression_info);
+    mono_aot_register_module((void **)mono_aot_module_System_IO_Compression_FileSystem_info);
+    mono_aot_register_module((void **)mono_aot_module_System_ComponentModel_Composition_info);
+     */
+    //mono_aot_register_module((void **)mono_aot_module_Xamarin_iOS_info);
     
     mono_jit_set_aot_mode(MONO_AOT_MODE_FULL);
 } // urho_mono_setup_aot

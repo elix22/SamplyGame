@@ -73,11 +73,11 @@
 using namespace Urho3D;
 
 
-static void main_function(MonoDomain* domain, const char* file, int argc, char** argv)
+static void main_function(Urho3D::Context * context,MonoDomain* domain, const char* file, int argc, char** argv)
 {
 
-    MonoAssembly* assembly;
-    assembly = mono_domain_assembly_open(domain, file);
+    String path = fixPathString(String("DotNet/") + file);
+    MonoAssembly*  assembly = urho3d_mono_load_assembly_from_cache(context, path, NULL, false);
     if (!assembly)
         exit(2);
 
@@ -85,9 +85,9 @@ static void main_function(MonoDomain* domain, const char* file, int argc, char**
 
 }
 
+
 int start_urho_mono_main(Platform platform) {
 
-    // copy mono assemblies to the user documents folder , mono will be configured to this folder
     Urho3D::SharedPtr<Urho3D::Context> context(new Urho3D::Context());
     context->RegisterSubsystem(new FileSystem(context));
     context->RegisterSubsystem(new ResourceCache(context));
@@ -95,28 +95,36 @@ int start_urho_mono_main(Platform platform) {
     ResourceCache* cache = context->GetSubsystem<ResourceCache>();
     String programDir = fileSystem->GetProgramDir();
     cache->AddResourceDir(fixPathString(programDir+"/Data"));
-    CopyMonoFilesToDocumentDir(context,platform);
-    String userDocumentsDir = fileSystem->GetUserDocumentsDir();
-    userDocumentsDir += "/temp/DotNet";
-    fixPath(userDocumentsDir);
-    context.Reset();
+  
+    urho3d_init_mono(context);
 
+ 
+#if defined(WIN32)
+    SetCurrentDirectory("D:\\Urho3D-Dev\\DotNet\\Urho3D\\build_vs2019\\bin");
+#endif
 
-    // start Mono
+    if (platform == _ANDROID_)
+    {
+        mono_dllmap_insert(NULL, "java-interop", "java_interop_jvm_list", "Urho3D", NULL);
+
+        mono_dllmap_insert(NULL, "System.Native", NULL, "mono-native", NULL);
+        mono_dllmap_insert(NULL, "System.Net.Security.Native", NULL, "mono-native", NULL);
+        
+        mono_dllmap_insert(NULL, "MonoPosixHelper", NULL, "MonoPosixHelper", NULL);
+        mono_dllmap_insert(NULL, "libmono-btls-shared", NULL, "mono-btls-shared", NULL);
+
+    }
     
   //  mono_debug_init (MONO_DEBUG_FORMAT_MONO);
   //  mono_trace_set_level_string("debug");
   //  mono_trace_set_log_handler(mono_log_callback, NULL);
 
-    MonoDomain* domain;
-   
     String asssemblyName =  "Game.dll";
-    String assemblyFullPath = userDocumentsDir + "/" + asssemblyName;
-
+  
     int argc = 2;
     char* argv[] = {
                         (char*)asssemblyName.CString(),
-                        (char*)assemblyFullPath.CString(),
+                        (char*)asssemblyName.CString(),
                         NULL
     };
     const char* file;
@@ -124,16 +132,22 @@ int start_urho_mono_main(Platform platform) {
 
     file = argv[1];
     
-    String mono_paths = userDocumentsDir.CString();
-    mono_set_dirs(mono_paths.CString(), "");
-    mono_set_assemblies_path(mono_paths.CString());
 
     mono_config_parse(NULL);
     
-    domain = mono_jit_init(file);
+    MonoDomain* domain = NULL;
+#if defined(IOS) || defined(TVOS) || defined(__ANDROID__)
+    // I don't know whether this actually matters or not
+    const char* runtime_version = "mobile";
+#else
+    const char* runtime_version = "v4.0.30319";
+#endif
+
+    domain = mono_jit_init_version("UrhoEngine.RootDomain", runtime_version);
+
     if (domain)
     {
-        main_function(domain, file, argc - 1, argv + 1);
+        main_function(context,domain, file, argc - 1, argv + 1);
         retval = mono_environment_exitcode_get();
         mono_jit_cleanup(domain);
     }
@@ -166,7 +180,7 @@ extern "C" __attribute__((visibility("default"))) int SDL_main(int argc, char** 
 extern "C" {
     int SDL_main(int argc, char** argv)
     {
-        return start_urho_mono_main(ANDROID);
+        return start_urho_mono_main(_ANDROID_);
     }
 }
 #elif  defined(IOS) || defined(TVOS)
